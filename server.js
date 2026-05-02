@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // MySQL ulanish (Railway environment variables)
 const dbConfig = {
-  host: process.env.MYSQLHOST || 'localhost',
+  host: process.env.MYSQLHOST || 'mysql.railway.internal',
   port: process.env.MYSQLPORT || 3306,
   user: process.env.MYSQLUSER || 'root',
   password: process.env.MYSQLPASSWORD || 'obNOzTnpcLlfGyhZmkeZZgVXZQEvNmtl',
