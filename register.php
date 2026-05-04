@@ -5,13 +5,13 @@ header('Content-Type: text/html; charset=utf-8');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    $full_name     = trim($_POST['full_name'] ?? '');
-    $username      = trim($_POST['username'] ?? '');
-    $email         = trim($_POST['email'] ?? '');
-    $password      = $_POST['password'] ?? '';
-    $phone         = trim($_POST['phone'] ?? '');
-    $birth_date    = $_POST['birth_date'] ?? null;
-    $gender        = $_POST['gender'] ?? null;
+    $full_name  = trim($_POST['full_name'] ?? '');
+    $username   = trim($_POST['username'] ?? '');
+    $email      = trim($_POST['email'] ?? '');
+    $password   = $_POST['password'] ?? '';
+    $phone      = trim($_POST['phone'] ?? '');
+    $birth_date = $_POST['birth_date'] ?? null;
+    $gender     = $_POST['gender'] ?? null;
 
     if (empty($username) || empty($email) || empty($password)) {
         echo "Username, Email va Parol majburiy!";
@@ -29,14 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $stmt->execute([$username, $email, $password_hash, $full_name, $phone, $birth_date, $gender]);
 
-        echo "✅ Ro'yxatdan o'tish muvaffaqiyatli amalga oshirildi!";
+        echo "✅ Muvaffaqiyatli! Ro'yxatdan o'tdingiz.";
 
     } catch(PDOException $e) {
-        if ($e->getCode() == 23000) {
-            echo "Bu username yoki email allaqachon mavjud!";
-        } else {
-            echo "Xatolik: " . $e->getMessage();
-        }
+        echo "XATO: " . $e->getMessage();
     }
+} else {
+    echo "Noto'g'ri so'rov";
 }
 ?>
