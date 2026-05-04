@@ -1,10 +1,10 @@
 <?php
 // Railway environment variablesdan avtomatik olish
-$host = getenv('MYSQLHOST') ?: 'localhost';
+$host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $port = getenv('MYSQLPORT') ?: '3306';
-$db   = getenv('MYSQLDATABASE') ?: 'your_database_name';
+$db   = getenv('MYSQLDATABASE') ?: 'railway';
 $user = getenv('MYSQLUSER') ?: 'root';
-$pass = getenv('MYSQLPASSWORD') ?: '';
+$pass = getenv('MYSQLPASSWORD') ?: 'BWHOveAWkOVkfNLccoGQBKCeFoShJuXf';
 
 try {
     $pdo = new PDO(
