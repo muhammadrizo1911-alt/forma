@@ -10,11 +10,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email      = trim($_POST['email'] ?? '');
     $password   = $_POST['password'] ?? '';
     $phone      = trim($_POST['phone'] ?? '');
-    $birth_date = $_POST['birth_date'] ?? null;
+    $birth_date = !empty($_POST['birth_date']) ? $_POST['birth_date'] : null;
     $gender     = $_POST['gender'] ?? null;
 
+    // Faqat asosiy maydonlarni tekshiramiz
     if (empty($username) || empty($email) || empty($password)) {
-        echo "Username, Email va Parol majburiy!";
+        echo "❌ Username, Email va Parol majburiy!";
         exit;
     }
 
@@ -29,10 +30,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $stmt->execute([$username, $email, $password_hash, $full_name, $phone, $birth_date, $gender]);
 
-        echo "✅ Muvaffaqiyatli! Ro'yxatdan o'tdingiz.";
+        echo "✅ Qabul qilindi! Ma'lumot bazaga saqlandi.";
 
     } catch(PDOException $e) {
-        echo "XATO: " . $e->getMessage();
+        if ($e->getCode() == 23000) {
+            echo "❌ Bu username yoki email allaqachon mavjud!";
+        } else {
+            echo "❌ XATO: " . $e->getMessage();
+        }
     }
 } else {
     echo "Noto'g'ri so'rov";
