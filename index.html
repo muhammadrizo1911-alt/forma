@@ -23,11 +23,7 @@
             width: 100%;
             max-width: 420px;
         }
-        h2 { 
-            text-align: center; 
-            margin-bottom: 25px; 
-            color: #333; 
-        }
+        h2 { text-align: center; margin-bottom: 25px; color: #333; }
         input, select {
             width: 100%;
             padding: 12px;
@@ -48,7 +44,18 @@
             margin-top: 10px;
         }
         button:hover { background: #5a67d8; }
-        .error { color: red; font-size: 14px; margin: 5px 0; display: none; }
+        button:disabled { background: #999; cursor: not-allowed; }
+
+        #message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error   { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -56,20 +63,13 @@
 <div class="container">
     <h2>Ro'yxatdan o'tish</h2>
     
-    <form id="registerForm" action="register.php" method="POST">
+    <form id="registerForm">
         <input type="text" name="full_name" placeholder="To'liq ism" required>
-        
         <input type="text" name="username" placeholder="Foydalanuvchi nomi" required>
-        <div class="error" id="usernameError"></div>
-        
         <input type="email" name="email" placeholder="Email manzil" required>
-        <div class="error" id="emailError"></div>
-        
         <input type="password" name="password" id="password" placeholder="Parol" required>
         <input type="password" name="confirm_password" id="confirm_password" placeholder="Parolni tasdiqlang" required>
-        
         <input type="tel" name="phone" placeholder="Telefon (+998901234567)">
-        
         <input type="date" name="birth_date">
         
         <select name="gender">
@@ -79,20 +79,63 @@
             <option value="other">Boshqa</option>
         </select>
         
-        <button type="submit">Ro'yxatdan o'tish</button>
+        <button type="submit" id="submitBtn">Ro'yxatdan o'tish</button>
     </form>
+
+    <div id="message"></div>
 </div>
 
 <script>
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    const pass = document.getElementById('password').value;
+const form = document.getElementById('registerForm');
+const messageDiv = document.getElementById('message');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Parol tekshirish
+    const password = document.getElementById('password').value;
     const confirm = document.getElementById('confirm_password').value;
-    
-    if (pass !== confirm) {
-        alert("Parollar mos kelmayapti!");
-        e.preventDefault();
+
+    if (password !== confirm) {
+        showMessage("Parollar mos kelmayapti!", "error");
+        return;
     }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Yuborilmoqda...";
+
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('register.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.text();
+
+        if (result.includes("muvaffaqiyatli") || result.includes("✅")) {
+            showMessage("✅ Sorovingiz qabul qilindi! Ro'yxatdan o'tish muvaffaqiyatli.", "success");
+            form.reset();
+        } else if (result.includes("allaqachon mavjud")) {
+            showMessage("❌ Bu username yoki email allaqachon mavjud.", "error");
+        } else {
+            showMessage("❌ Xatolik yuz berdi. Qayta urinib ko'ring.", "error");
+        }
+    } catch (error) {
+        showMessage("❌ Server bilan bog'lanishda xatolik.", "error");
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Ro'yxatdan o'tish";
 });
+
+function showMessage(text, type) {
+    messageDiv.textContent = text;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = "block";
+}
 </script>
 
 </body>
